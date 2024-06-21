@@ -20,9 +20,67 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+
+//Optional solution number 3 with a way to get and return the curent time
+  // empty request
+app.get("/api/", (req, res) => {
+  let now = new Date();
+  res.json({ unix: now.getTime(), utc: now.toUTCString() });
 });
+
+app.get("/api/:date", (req, res) => {
+  let inputDate;
+  if (/^[0-9]+$/.test(req.params.date)) {
+    inputDate = new Date(parseInt(req.params.date));
+  } else {
+    inputDate = new Date(req.params.date);
+  }
+
+  if (inputDate != "Invalid Date") {
+    const unix = inputDate.getTime();
+    console.log(inputDate.toString());
+    res.json({ unix: unix, utc: inputDate.toUTCString() });
+  } else {
+    res.json({ error: inputDate.toUTCString() });
+  }
+});
+
+
+//Optional solution 2 . Still not able to set :input or :date? to return a valid current date when my app url is visited
+//app.get("/api/:date?", function (req, res) {
+  //let date = req.params.date;
+  //let unixDate;
+  //let dateObj;
+  //let utcDate;
+//Test if input is a number//
+//let isUnix = /^\d+$/.test(date);
+
+//If no date specified use the current date//
+//if (!date) {
+  //dateObj = new Date();
+//}
+//If date is a unix timestamp
+//else if (date && isUnix){
+  //unixDate = parseInt(date);
+  //dateObj = new Date(unixDate);
+//}
+
+//If date is not a unix timestamp
+//else if (date && !isUnix) {
+  //dateObj = new Date(date);
+//}
+
+//if (dateObj.toString() === "Invalid Date"){
+  //res.json({error: "Invalid Date"});
+  //return;
+//}
+
+
+  //unixDate = dateObj.getTime();
+  //unixDate = dateObj.toUTCString();
+
+  //res.json({unix: unixDate, utc: utcDate});
+//});
 
 
 
@@ -30,7 +88,7 @@ app.get("/api/hello", function (req, res) {
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
- //My optional Solution// problem wi
+ //My optional Solution// have some errors
  //This is the url of where my app will be hosted ;
  //https://3000-freecodecam-boilerplate-1exewx84iwx.ws-eu114.gitpod.io
  //The first thing we needd to do for our app is to setup some routes
@@ -38,10 +96,10 @@ var listener = app.listen(process.env.PORT || 3000, function () {
  //So the that above is our url route for our timestamp api/timestamp/date_string 
  //date string is an iput which our timestamp will take, we can also call it the homepage or result :) and that can be a date strin or unix time as on our sample page. Now lets start by setting up a date string and explain the code below
  
- let responseObject = {};
- app.get('/api/timestamp/:input', (request,response) => {
-  let input = request.params.input;
-responseObject = {};
+ //let responseObject = {};
+// app.get('/api/timestamp/:input', (request,response) => {
+  //let input = request.params.input;
+//responseObject = {};
  
  //First we called a method on the app using app.get to get access toour timestamp url and be able to set it up. Our path to get should just be /api/timestamp/ since thats what we are working on
  //Next we will be telling what we will be having in , either a date_string or a unix time. we used the request query thats why we put the colon ":input" . Next we create our middleware function as learned in the previous lesson. and we are using request and response and set its => 
@@ -56,45 +114,45 @@ responseObject = {};
 
 //req.params.input is To extract and determine if input is a valid date in the specified format below or a unix timestm
 
-if(input.includes('-')){
+//if(input.includes('-')){
   //date string//
   //#1 step returning a valid unix timestamp//
-  let date = new Date(input);
-  if (date.getTime()) 
-  {responseObject['unix'] = date.getTime();
+  //let date = new Date(input);
+  //if (date.getTime()) 
+  //{responseObject['unix'] = date.getTime();
   //#2 step returning a valid utc date string//
-  responseObject['utc'] = date.toUTCString();
-}else{
-  response.json({error: 'Invalid Date'});
-}
-} else {
+  //responseObject['utc'] = date.toUTCString();
+//}else{
+  //response.json({error: 'Invalid Date'});
+//}
+//}
   //Timestamp//
-let timestamp = parseInt(input); //Confirming our integer & date//
-if (timestamp)
-{responseObject['unix'] /*converting to date*/ = new Date(timestamp).getTime();
+//let timestamp = parseInt(input); //Confirming our integer & date//
+//if (timestamp)
+//{responseObject['unix'] /*converting to date*/ = new Date(timestamp).getTime();
 //optional:adding utc too// 
-responseObject['utc'] = new Date(timestamp).toUTCString();
-}
+//responseObject['utc'] = new Date(timestamp).toUTCString();
+//}
 //Checking/returning an expected error for an invalid date//
-else{
-  response.json({error: 'Invalid Date'});
-}
-}
-response.json(responseObject);
-});
+//else{
+  //response.json({error: 'Invalid Date'});
+//}
+//}
+//response.json(responseObject);
+//});
 
 //Returning current time & date in unix format for an empty date parametr//
-app.get('/api/timestamp', (request,response) => {
-  let input = new Date().getTime();
+//app.get('/api/timestamp', (request,response) => {
+  //let input = new Date().getTime();
 
-  responseObject = {
-    unix: input,
+  //responseObject = {
+    //unix: input,
     /*Setting up a return to utc instead*/
-    utc: new Date(input).toUTCString()
-  };
+    //utc: new Date(input).toUTCString()
+  //};
 
-  response.json(responseObject);
-});
+  //response.json(responseObject)
+//});
 
 
 //So what this will do is whatever we put in there it will be stored as or replace input in our route and display the result in our app when switch to. So lets say we set our parems :input to be datestring when prompted it will show the function written in
